@@ -17,7 +17,13 @@ if(!empty($_POST)){
         echo saveQuestion($insertData);die;
     }    
 }
-
+if(!empty($_GET)){
+    if(!empty($_GET['type']) && $_GET['type']=='delete' && !empty($_GET['guide_id'])){
+        $guideDelete = guideDelete($_GET['guide_id']);
+        $displayMessage = $guideDelete?'Guide has been deleted successfully':'Error in deleting guide';
+        header('Location:guide_list.php?success='.$displayMessage);        
+    }
+}
 function connect()
 {
     $user = "root";
@@ -75,18 +81,29 @@ function saveOption($insertData){
     }  
 }
 
-function guideList(){
+function guideList($id=''){
     $mysqli = connect();
-    $sql = "SELECT * FROM guides order by id asc";    
+    $sql = "SELECT * FROM guides where deleted_at is null";
+    if(!empty($id)){
+        $sql .= " and id='".$id."'";
+    }    
+    $sql .= " order by id asc";
     $result = $mysqli->query($sql);
     $selectArr = [];
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
               $selectArr[] = $row;
         }
-    } else {
-        printf('No record found.<br />');
-    }
+    } 
     return $selectArr;
+}
+function guideDelete($id){
+    $mysqli = connect();
+    $query = "delete FROM guides where id='".$id."'";    
+    if (!$mysqli->query($query)) {
+        return false;
+    } else {
+        return true;
+    }  
 }
 ?>

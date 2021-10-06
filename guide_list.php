@@ -15,7 +15,7 @@ $guides = guideList();
     <title>Sales Script</title>
   </head>
   <body style="background-color: #E7E9EB;">
-    <h1>Guide List</h1>
+    <h1><a href="guide_list.php">Guide List</a></h1>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -28,12 +28,17 @@ $guides = guideList();
                 <div class="breadcomb-list">
 					<div class="row">
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-							
+                            <?php
+                            if(!empty($_GET['success'])){?>
+							    <div class="alert alert-success">
+                                    <?=$_GET['success'];?>
+                                </div>
+                            <?}?>
 						</div>
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 							<div class="breadcomb-wp pull-right">
 								<div class="breadcomb-ctn">
-									<a href="guide.html" class="btn btn-primary" title="Add Guide">Add Guide</a>
+									<a href="addedit.php" class="btn btn-primary" title="Add Guide">Add Guide</a>
 								</div>
 							</div>
 						</div>
@@ -71,12 +76,14 @@ $guides = guideList();
                                                 <td><?=$g['question_description'];?></td>
                                                 <td><?=$g['status'];?></td>
                                                 <td><?=date('F d, Y',strtotime($g['created_at']));?></td>
-                                                <td><a class='btn btn-primary' href="addedit.php?guide_id=<?=$g['id'];?>">Edit </a> &nbsp<a class='btn btn-danger'>Delete</a><td>
+                                                <td><a class='btn btn-primary' href="addedit.php?guide_id=<?=$g['id'];?>">Edit </a> &nbsp &nbsp<a href="guide.php?guide_id=<?=$g['id'];?>&type=delete" class='btn btn-danger'>Delete</a><td>
                                             </tr>    
                                             <?php
                                             $cnt ++;
                                         }
-                                    }                                   
+                                    }   else{
+                                        echo "<tr><td colspan='6'>No Record Found</td></tr>";
+                                    }                                 
                                     ?>                                      
                                </tbody>
                                

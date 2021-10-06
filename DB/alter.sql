@@ -1,0 +1,1 @@
+ALTER TABLE `guides` CHANGE `status` `status` VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT 'draft';

@@ -1,3 +1,16 @@
+<?php
+require_once 'guide.php';
+if(!empty($_GET['guide_id'])){
+		$guideData = guideList($_GET['guide_id']);
+		$guideTitle = $guideDesc = $guideId ='';
+		if(!empty($guideData[0])){
+				$guideTitle = $guideData[0]['question_title'];
+				$guideDesc = $guideData[0]['question_description'];
+				$guideId = $guideData[0]['id'];
+		}
+}
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -33,16 +46,19 @@
   				init();
   		});
   		function init(){
+  				var guideTitle = '<?=$guideTitle;?>';
+  				var guideDesc = '<?=$guideDesc;?>';
+  				var guideId = '<?=$guideId;?>';
   				var i=1;
   				$('.createStep').attr('id','createStep'+i);
   				var html ='<div class="form-group">'
 					    +'<label for="stepNamme">Step Name</label>'
-					    +'<input type="text" name="question_title" class="form-control" id="stepTitle'+i+'" aria-describedby="stepName" placeholder="Enter Step Title"> <input type="hidden" name="question_id" class="form-control" id="question_id" aria-describedby="stepName_id" value="">'
+					    +'<input type="text" name="question_title" class="form-control" id="stepTitle'+i+'" aria-describedby="stepName" placeholder="Enter Step Title" value="'+guideTitle+'"> <input type="hidden" name="question_id" class="form-control" id="question_id" aria-describedby="stepName_id" value="'+guideId+'">'
 					    +'<small class="form-text text-muted">Please enter the step title</small>'
 						+'</div>'
 						+'<div class="form-group">'
 					    +'<label for="stepDescription">Step Description</label>'
-					    +'<textarea class="form-control" name="question_description" id="stepDescription'+i+'" aria-describedby="stepDescription" placeholder="Enter Step Description"></textarea>'
+					    +'<textarea class="form-control" name="question_description" id="stepDescription'+i+'" aria-describedby="stepDescription" placeholder="Enter Step Description">'+guideDesc+'</textarea>'
 					    +'<small class="form-text text-muted">Please enter the step description</small>'
 		        +'</div>'
 
