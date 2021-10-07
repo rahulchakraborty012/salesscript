@@ -10,6 +10,15 @@ if(!empty($_POST)){
         $insertData['question_description'] = $_POST['description'];
         updateQuestion($_POST['title'],$_POST['description'],$_POST['question_id']);
     }
+    else if(!empty($_POST['question_id']) && !empty($_POST['option_title']) && !empty($_POST['choiceID'])){
+        $insertData1['question_id'] = $_POST['question_id'];
+        $insertData1['option_title'] = $_POST['option_title'];
+        $insertData1['option_label'] = $_POST['option_label'];        
+        updateOption($_POST['question_id'],$_POST['option_title'],$_POST['option_label'],$_POST['choiceID']);
+    }
+    else if(!empty($_POST['choiceID']) && $_POST['type']=='deleteOption'){        
+        deleteOption($_POST['choiceID']);
+    }
     else{
         $insertData['question_title'] = $_POST['title'];
         $insertData['question_description'] = $_POST['description'];
@@ -106,4 +115,30 @@ function guideDelete($id){
         return true;
     }  
 }
+
+function guideOptions($guide_id=''){
+    $mysqli = connect();
+    $sql = "SELECT * FROM options where question_id=$guide_id order by id asc";
+    $result = $mysqli->query($sql);
+    $selectArr = [];
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+              $selectArr[] = $row;
+        }
+    } 
+    return $selectArr;
+}
+
+function deleteOption($choiceID){
+    $mysqli = connect();
+    $query = "delete FROM options where id='".$choiceID."'";    
+    if (!$mysqli->query($query)) {
+        return false;
+    } else {
+        echo "Option has been deleted successfully";
+        return true;
+       
+    }  
+}
+
 ?>
