@@ -49,10 +49,10 @@ if(!empty($_GET['option_id'])){
     <title>Sales Script</title>
   </head>
   <body style="background-color: #E7E9EB;">     
-     <h3> <a href="guide_list.php"> Back to List</a></h3>
+     <h3> <a href="guide_list.php"> Back to Guide List</a></h3>
       <?php
       if(!empty($backLink)){?>
-      		<h4> <a href="<?=$backLink;?>" class="btn btn-primary">Go Back</a></h4>
+      		<h4> <a href="<?=$backLink;?>" class="btn btn-primary">Back to Previous Step</a></h4>
     	<?php
       }?>     
      <!-- Optional JavaScript -->
