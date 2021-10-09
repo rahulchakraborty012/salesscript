@@ -10,6 +10,30 @@ if(!empty($_GET['guide_id'])){
 		}
 		$guideoptionData = guideOptions($_GET['guide_id']);
 }
+$option_id="";
+$backLink='';
+if(!empty($_GET['option_id'])){
+	$option_id=$_GET['option_id'];
+	$guideData = guideList('',$_GET['option_id']);
+	$guideTitle = $guideDesc = $guideId ='';
+	if(!empty($guideData[0])){
+			$guideTitle = $guideData[0]['question_title'];
+			$guideDesc = $guideData[0]['question_description'];
+			$guideId = $guideData[0]['id'];
+			$guideoptionData = guideOptions($guideId);			
+	}	
+   
+  $getPreviousData = getBackLink($_GET['option_id']);
+  if(!empty($getPreviousData[0])){
+  		if(!empty($getPreviousData[0]['answer_option_id'])){
+  				$backLink = "addedit.php?option_id=".$getPreviousData[0]['answer_option_id'];
+  		}
+  		else{
+  				$backLink = "addedit.php?guide_id=".$getPreviousData[0]['id'];
+  		}
+  }
+
+}
 ?>
 
 <!doctype html>
@@ -24,8 +48,13 @@ if(!empty($_GET['guide_id'])){
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Sales Script</title>
   </head>
-  <body style="background-color: #E7E9EB;">
-     <h1> <?= ($_GET['guide_id'])?'Edit':'Add' ?> Sales Script</h1>  <br>
+  <body style="background-color: #E7E9EB;">     
+     <h3> <a href="guide_list.php"> Back to List</a></h3>
+      <?php
+      if(!empty($backLink)){?>
+      		<h4> <a href="<?=$backLink;?>" class="btn btn-primary">Go Back</a></h4>
+    	<?php
+      }?>     
      <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -35,6 +64,7 @@ if(!empty($_GET['guide_id'])){
     	<div class="row">
     		<div class="col-md-4"></div>
     		<div class="col-md-8 pull-left">
+    			<h1> <?= ($_GET['guide_id'])?'Edit':'Add' ?> Sales Script</h1>  <br>
 		    	<form class="createStep" id=createStep1>
 			    	
 					</form>
@@ -64,8 +94,8 @@ if(!empty($_GET['guide_id'])){
 		        +'</div>'
 
 					  +'<div class="stepChoiceForm pull-left" id="">'
-					  	+'<a id="createChoices" onclick="createQuestion('+i+');" href="javascript:void(0);">Save Question <i class="fa fa-save"></i></a> &nbsp;<span>Next Step(s)</span>'
-					  	+'<a id="createChoices" onclick="createChoices('+i+');" href="javascript:void(0);"><i class="fa fa-plus"></i></a>'
+					  	+'<a id="createChoices" onclick="createQuestion('+i+');" href="javascript:void(0);" class="btn btn-success">Save Question <i class="fa fa-save"></i></a> &nbsp;'
+					  	+'<a id="createChoices" onclick="createChoices('+i+');" href="javascript:void(0);" class="btn btn-primary">Add Choice(s) &nbsp;<i class="fa fa-plus"></i></a>'
 					  +'</div>';
 					  $('#createStep'+i).html(html);
 						EditChoices(i);
@@ -74,15 +104,16 @@ if(!empty($_GET['guide_id'])){
 			var stepTitle = $('.createStep #stepTitle'+num).val();
     	var stepDescription = $('.createStep #stepDescription'+num).val();
 			var question_id = $('.createStep #question_id').val();
+			var option_id = '<?= $option_id; ?>';
 			console.log(question_id);
     		if($.trim(stepTitle)=='' || $.trim(stepDescription)==''){
     			 	alert('Please enter step title and description');
     			 	return false;
     		}
 			if(question_id=="")
-    			saveQuestion(stepTitle,stepDescription,num);
+    			saveQuestion(stepTitle,stepDescription,option_id,num);
 			else
-					updateQuestion(stepTitle,stepDescription,question_id,num);
+					updateQuestion(stepTitle,stepDescription,question_id,option_id,num);
 		}
     	function createChoices(num){    
     		var stepTitle = $('.createStep #stepTitle'+num).val();
@@ -95,13 +126,16 @@ if(!empty($_GET['guide_id'])){
 		
     		var choiceOptionLength = $('.stepChoiceForm .choiceOptions').length;
     		var elementCount = (choiceOptionLength+1);
-    		var html = '<div class="choiceOptions" id="choiceOption'+elementCount+'" style="margin-top:10px;">'
+    		
+		    var html = '<div class="choiceOptions" id="choiceOption'+elementCount+'" style="margin-top:10px;">'
 	    					+'<div class="form-group">'
 						    +'<label for="choiceName">Choice'+elementCount+'</label>'
 						    +'<input type="text" name="choice_title'+elementCount+'" class="form-control" id="choiceTitle'+elementCount+'" aria-describedby="choiceName"><br/>'
 						    +'<label for="choiceButtonLabel">Button Label</label>'
-						    +'<input type="text" name="choice_button_label'+elementCount+'" class="form-control" id="choiceButtonLabel'+elementCount+'" aria-describedby="choiceButtonLabel"><br/>'
-						    +'<a id="saveChoices" onclick="saveChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-success">Save <i class="fa fa-save"></i></a></div>';
+						    +'<input type="text" name="choice_button_label'+elementCount+'" class="form-control" id="choiceButtonLabel'+elementCount+'" aria-describedby="choiceButtonLabel"><input type="hidden" name="choiceid'+elementCount+'" class="form-control" id="choiceid'+elementCount+'" aria-describedby="addchoice_id" value=""><br/>'
+						    +'<a id="saveChoices" onclick="saveChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-success">Save <i class="fa fa-save"></i></a> <a id="removeChoices" onclick="RemoveNewChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-danger">Remove <i class="fa fa-close"></i></a>&nbsp;'
+					  	+'<a id="createnewquestion'+elementCount+'" onclick="createnewQuestion('+elementCount+');" href="javascript:void(0);" class="btn btn-success hidden">Go to next step</a></span></div>';
+
 				$('.stepChoiceForm').append(html);
     	}
 
@@ -113,22 +147,24 @@ if(!empty($_GET['guide_id'])){
 						$cnt+1;
 					?>
 					var choiceOptionLength = $('.stepChoiceForm .choiceOptions').length;
-					var elementCount = (choiceOptionLength+1);
-						var html = '<div class="choiceOptions" id="choiceOption'+<?= $cnt; ?>+'" style="margin-top:10px;">'
-									+'<div class="form-group">'
-									+'<label for="choiceName">Choice'+elementCount+'</label>'
-									+'<input type="text" name="choice_title'+elementCount+'" class="form-control" id="choiceTitle'+elementCount+'" aria-describedby="choiceName" value="<?= $g['option_title']; ?>"><br/>'
-									+'<label for="choiceButtonLabel">Button Label</label>'
-									+'<input type="text" name="choice_button_label'+elementCount+'" class="form-control" id="choiceButtonLabel'+elementCount+'" aria-describedby="choiceButtonLabel" value="<?= $g['option_label']; ?>"><input type="hidden" name="choice_id'+elementCount+'" class="form-control" id="choiceid'+elementCount+'" aria-describedby="choiceid" value="<?= $g['id']; ?>"><br/>'
-									+'<a id="saveChoices" onclick="saveChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-success">Save <i class="fa fa-save"></i></a>  <a id="removeChoices" onclick="removeChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-danger">Remove <i class="fa fa-remove"></i></a></div>';
+					var elementCount = (choiceOptionLength+1);		
+					var html = '<div class="choiceOptions" id="choiceOption'+<?= $cnt; ?>+'" style="margin-top:10px;">'
+					+'<div class="form-group">'
+					+'<label for="choiceName">Choice'+elementCount+'</label>'
+					+'<input type="text" name="choice_title'+elementCount+'" class="form-control" id="choiceTitle'+elementCount+'" aria-describedby="choiceName" value="<?= $g['option_title']; ?>"><br/>'
+					+'<label for="choiceButtonLabel">Button Label</label>'
+					+'<input type="text" name="choice_button_label'+elementCount+'" class="form-control" id="choiceButtonLabel'+elementCount+'" aria-describedby="choiceButtonLabel" value="<?= $g['option_label']; ?>"><input type="hidden" name="choice_id'+elementCount+'" class="form-control" id="choiceid'+elementCount+'" aria-describedby="choiceid" value="<?= $g['id']; ?>"><br/>'
+					+'<a id="saveChoices" onclick="saveChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-success">Save <i class="fa fa-save"></i></a>  <a id="removeChoices" onclick="removeChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-danger">Remove <i class="fa fa-remove"></i></a> &nbsp;'
+	  	+'<a id="createnewquestion'+elementCount+'" onclick="createnewQuestion('+elementCount+');" href="javascript:void(0);" class="btn btn-success">Go to next step</a></div>';
+
 						$('.stepChoiceForm').append(html);
 				<?php }
 				}                                
 			?>   		
     	}
 
-    	function saveQuestion(title,description,num){
-    			var postData = {"title" : title, "description":description};
+    	function saveQuestion(title,description, option_id, num){
+    			var postData = {"title" : title, "description":description, "option_id":option_id};
     			var request = $.ajax({
 						  url: "guide.php",
 						  method: "POST",
@@ -136,15 +172,17 @@ if(!empty($_GET['guide_id'])){
 						  dataType: "json"
 					});
 					request.done(function(response){
-							if(response!=false)
+							if(response!=false){								
 								$("#question_id").val(response);
+								alert('Question Saved successfully');
+							}
 					});
 					request.fail(function(err){
 							console.log(err);
 					})
     	}
-    	function updateQuestion(title,description,question_id,num){
-    			var postData = {"title" : title, "description":description,"question_id":question_id};
+    	function updateQuestion(title,description,question_id,option_id,num){
+    			var postData = {"title" : title, "description":description,"question_id":question_id,"option_id":option_id};
     			var request = $.ajax({
 						  url: "guide.php",
 						  method: "POST",
@@ -152,7 +190,7 @@ if(!empty($_GET['guide_id'])){
 						  dataType: "json"
 					});
 					request.done(function(response){
-							console.log(response);
+							alert('Question Updated successfully');
 					});
 					request.fail(function(err){
 							console.log(err);
@@ -164,17 +202,17 @@ if(!empty($_GET['guide_id'])){
     		var stepDescription = $('.stepChoiceForm #choiceButtonLabel'+num).val();
 				var questionID = $('.createStep #question_id').val();
 				var choiceID = $('.stepChoiceForm #choiceid'+num).val();
-    		if($.trim(stepTitle)=='' || $.trim(stepDescription)==''){
+    		if(($.trim(stepTitle)=='' || $.trim(stepDescription)=='') && questionID=='' ){
     			 	alert('Please enter step Choice and Button Label');
     			 	return false;
     		}
-				if(questionID=="")
+				if(choiceID=="")
 						saveOption(stepTitle,stepDescription,questionID,choiceID,num);
 				else
 						updateOption(stepTitle,stepDescription,questionID,choiceID,num); 		
     	}
 
-		function saveOption(choicetitle,choicedescription,questionID,num){
+		function saveOption(choicetitle,choicedescription,questionID,choiceID,num){
 					var postData = {"question_id":questionID ,"option_title" : choicetitle, "option_label":choicedescription, "choiceID":choiceID};
     			var request = $.ajax({
 						  url: "guide.php",
@@ -182,7 +220,11 @@ if(!empty($_GET['guide_id'])){
 						  data: postData,
 						  dataType: "json"
 					});
-					request.done(function(response){
+					request.done(function(response){			
+							var choiceid=	response;			
+							$("#choiceid"+num).val(choiceid);
+							if(choiceid)
+									$("#createnewquestion"+num).removeClass('hidden');
 							alert("Choice saved successfully");
 					});
 					request.fail(function(err){
@@ -199,7 +241,7 @@ if(!empty($_GET['guide_id'])){
 						  dataType: "json"
 					});
 					request.done(function(response){
-						console.log(response);
+						alert("Choice updated successfully");
 					});
 					request.fail(function(err){
 						
@@ -217,8 +259,8 @@ if(!empty($_GET['guide_id'])){
 						  dataType: "json"
 					});
 					request.done(function(response){
-						console.log(response.status);
-						EditChoices(num);
+							EditChoices(num);
+							alert("Choice removed successfully");
 					});
 					request.fail(function(err){
 						console.log(err.status);
@@ -226,5 +268,14 @@ if(!empty($_GET['guide_id'])){
 						window.location="addedit.php?guide_id="+'<?=$guideId;?>';
 					})
     	}
+		function RemoveNewChoices(num){
+				removeChoices(num);
+				$("#choiceOption"+num).remove();
+			
+		}
+		function createnewQuestion(num){
+			var choiceID = $('.stepChoiceForm #choiceid'+num).val();
+			window.location="addedit.php?option_id="+choiceID;	
+		}
     </script>
 </html>

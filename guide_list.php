@@ -69,6 +69,9 @@ $guides = guideList();
                                     if(!empty($guides)){
                                         $cnt = 1;
                                         foreach($guides as $g){
+                                            if(!empty($g['answer_option_id'])){
+                                                continue;
+                                            }
                                             ?>
                                              <tr>
                                                 <td><?=$cnt;?></td>
@@ -76,7 +79,14 @@ $guides = guideList();
                                                 <td><?=$g['question_description'];?></td>
                                                 <td><?=$g['status'];?></td>
                                                 <td><?=date('F d, Y',strtotime($g['created_at']));?></td>
-                                                <td><a class='btn btn-primary' href="addedit.php?guide_id=<?=$g['id'];?>">Edit </a> &nbsp &nbsp<a href="guide.php?guide_id=<?=$g['id'];?>&type=delete" class='btn btn-danger'>Delete</a><td>
+                                                <td><a class='btn btn-primary' href="addedit.php?guide_id=<?=$g['id'];?>">Edit </a> &nbsp &nbsp
+                                                    <a href="guide.php?guide_id=<?=$g['id'];?>&type=delete" class='btn btn-danger'>Delete</a> &nbsp &nbsp
+                                                    <?php
+                                                    if($g['status']=='draft'){?>
+                                                        <a href="guide.php?guide_id=<?=$g['id'];?>&type=publish" class='btn btn-warning'>Publish</a><td>
+                                                    <?php
+                                                    }?>
+                                                    
                                             </tr>    
                                             <?php
                                             $cnt ++;

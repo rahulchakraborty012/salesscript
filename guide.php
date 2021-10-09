@@ -1,4 +1,5 @@
 <?php
+require_once 'database.php';
 if(!empty($_POST)){  
     if(!empty($_POST['question_id']) && !empty($_POST['option_title'])){
         $insertData1['question_id'] = $_POST['question_id'];
@@ -8,7 +9,10 @@ if(!empty($_POST)){
     }else if(!empty($_POST['question_id']) && !empty($_POST['title'])){
         $insertData['question_title'] = $_POST['title'];
         $insertData['question_description'] = $_POST['description'];
-        updateQuestion($_POST['title'],$_POST['description'],$_POST['question_id']);
+        if(!empty($_POST['option_id'])){
+            $insertData['answer_option_id'] = $_POST['option_id'];
+        }     
+        updateQuestion($_POST['title'],$_POST['description'],$_POST['question_id'],$insertData['answer_option_id']);
     }
     else if(!empty($_POST['question_id']) && !empty($_POST['option_title']) && !empty($_POST['choiceID'])){
         $insertData1['question_id'] = $_POST['question_id'];
@@ -22,6 +26,10 @@ if(!empty($_POST)){
     else{
         $insertData['question_title'] = $_POST['title'];
         $insertData['question_description'] = $_POST['description'];
+        if(!empty($_POST['option_id'])){
+            $insertData['parent_id'] = $_POST['option_id'];
+            $insertData['answer_option_id'] = $_POST['option_id'];
+        }	    
         $insertData['created_at'] = date('Y-m-d H:i:s');
         echo saveQuestion($insertData);die;
     }    
@@ -32,19 +40,11 @@ if(!empty($_GET)){
         $displayMessage = $guideDelete?'Guide has been deleted successfully':'Error in deleting guide';
         header('Location:guide_list.php?success='.$displayMessage);        
     }
-}
-function connect()
-{
-    $user = "root";
-    $host = "localhost";
-    $pass = "rahul";
-    $db = "rightbiz";
-    $mysqli = new mysqli($host,$user,  $pass, $db);
-    if($mysqli->connect_errno) {
-        echo "Failed to connect to MySQL: " . $mysqli->connect_error;
-        exit();
+    if(!empty($_GET['type']) && $_GET['type']=='publish' && !empty($_GET['guide_id'])){
+        $guideDelete = guidePublish($_GET['guide_id']);
+        $displayMessage = $guideDelete?'Guide has been publish successfully':'Error in publishing guide';
+        header('Location:guide_list.php?success='.$displayMessage);        
     }
-    return $mysqli;
 }
 
 function saveQuestion($insertData){
@@ -63,9 +63,10 @@ function saveQuestion($insertData){
     }  
 }
 
-function updateQuestion($title,$description,$question_id){
+function updateQuestion($title,$description,$question_id,$option_id=''){
     $mysqli = connect();
-    $query = "update guides set question_title='".$title."' , question_description='".$description."' where id='".$question_id."'";
+    $query = "update guides set question_title='".$title."' , question_description='".$description."',
+    answer_option_id='".$option_id."' where id='".$question_id."'";
     if ($mysqli->query($query) === TRUE) {
         echo "Question updated successfully.";
         return true;
@@ -89,12 +90,24 @@ function saveOption($insertData){
         return false;
     }  
 }
-
-function guideList($id=''){
+function updateOption($question_id,$title,$label,$choiceID){
+    $mysqli = connect();
+    $query = "update options set option_title='".$title."' , option_label='".$label."' where id='".$choiceID."'";
+    if ($mysqli->query($query) === TRUE) {
+        echo "Choice updated successfully.";
+        return true;
+    } else {
+        return false;
+    }  
+}
+function guideList($id='',$option_id=''){
     $mysqli = connect();
     $sql = "SELECT * FROM guides where deleted_at is null";
     if(!empty($id)){
         $sql .= " and id='".$id."'";
+    }   
+    if(!empty($option_id)){
+        $sql .= " and answer_option_id='".$option_id."'";
     }    
     $sql .= " order by id asc";
     $result = $mysqli->query($sql);
@@ -140,5 +153,26 @@ function deleteOption($choiceID){
        
     }  
 }
+function guidePublish($id){
+    $mysqli = connect();
+    $query = "update guides set status='published' where id='".$id."'";    
+    if (!$mysqli->query($query)) {
+        return false;
+    } else {
+        return true;
+    }  
+}
 
+function getBackLink($option_id){
+    $mysqli = connect();
+    $query = "SELECT g.answer_option_id,g.id from guides g join options o on g.id=o.question_id where o.id='".$option_id."'";
+    $result = $mysqli->query($query);
+    $selectArr = [];
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+              $selectArr[] = $row;
+        }
+    } 
+    return $selectArr;
+}
 ?>
