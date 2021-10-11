@@ -3,29 +3,27 @@ require_once 'database.php';
 if(!empty($_POST)){  
     if(!empty($_POST['question_id']) && !empty($_POST['option_title'])){
         $insertData1['question_id'] = $_POST['question_id'];
-        $insertData1['option_title'] = $_POST['option_title'];
-        $insertData1['option_label'] = $_POST['option_label'];        
+        $insertData1['option_title'] = addslashes($_POST['option_title']);
+        $insertData1['option_label'] = addslashes($_POST['option_label']);        
         echo saveOption($insertData1);die;
     }else if(!empty($_POST['question_id']) && !empty($_POST['title'])){
-        $insertData['question_title'] = $_POST['title'];
-        $insertData['question_description'] = $_POST['description'];
-        if(!empty($_POST['option_id'])){
-            $insertData['answer_option_id'] = $_POST['option_id'];
-        }     
-        updateQuestion($_POST['title'],$_POST['description'],$_POST['question_id'],$insertData['answer_option_id']);
+            $insertData['question_title'] = addslashes($_POST['title']);
+            $insertData['question_description'] = addslashes($_POST['description']);
+            $insertData['answer_option_id'] = !empty($_POST['option_id'])?$_POST['option_id']:0;
+            updateQuestion($insertData['question_title'],$insertData['question_description'],$_POST['question_id'],$insertData['answer_option_id']);
     }
     else if(!empty($_POST['question_id']) && !empty($_POST['option_title']) && !empty($_POST['choiceID'])){
         $insertData1['question_id'] = $_POST['question_id'];
-        $insertData1['option_title'] = $_POST['option_title'];
-        $insertData1['option_label'] = $_POST['option_label'];        
-        updateOption($_POST['question_id'],$_POST['option_title'],$_POST['option_label'],$_POST['choiceID']);
+        $insertData1['option_title'] = addslashes($_POST['option_title']);
+        $insertData1['option_label'] = addslashes($_POST['option_label']);        
+        updateOption($insertData1['question_id'],$insertData1['option_title'],$insertData1['option_label'],$_POST['choiceID']);
     }
     else if(!empty($_POST['choiceID']) && $_POST['type']=='deleteOption'){        
         deleteOption($_POST['choiceID']);
     }
     else{
-        $insertData['question_title'] = $_POST['title'];
-        $insertData['question_description'] = $_POST['description'];
+        $insertData['question_title'] = addslashes($_POST['title']);
+        $insertData['question_description'] = addslashes($_POST['description']);
         if(!empty($_POST['option_id'])){
             $insertData['parent_id'] = $_POST['option_id'];
             $insertData['answer_option_id'] = $_POST['option_id'];
@@ -92,7 +90,7 @@ function saveOption($insertData){
 }
 function updateOption($question_id,$title,$label,$choiceID){
     $mysqli = connect();
-    $query = "update options set option_title='".$title."' , option_label='".$label."' where id='".$choiceID."'";
+    $query = "update options set option_title='".$title."' , option_label='".$label."' where id='".$choiceID."' limit 1";
     if ($mysqli->query($query) === TRUE) {
         echo "Choice updated successfully.";
         return true;
@@ -102,7 +100,7 @@ function updateOption($question_id,$title,$label,$choiceID){
 }
 function guideList($id='',$option_id=''){
     $mysqli = connect();
-    $sql = "SELECT * FROM guides where deleted_at is null";
+    $sql = "SELECT id,question_title,question_description,answer_option_id,status FROM guides where deleted_at is null";
     if(!empty($id)){
         $sql .= " and id='".$id."'";
     }   
@@ -121,7 +119,7 @@ function guideList($id='',$option_id=''){
 }
 function guideDelete($id){
     $mysqli = connect();
-    $query = "delete FROM guides where id='".$id."'";    
+    $query = "delete FROM guides where id='".$id."' limit 1";    
     if (!$mysqli->query($query)) {
         return false;
     } else {
@@ -144,7 +142,7 @@ function guideOptions($guide_id=''){
 
 function deleteOption($choiceID){
     $mysqli = connect();
-    $query = "delete FROM options where id='".$choiceID."'";    
+    $query = "delete FROM options where id='".$choiceID."' limit 1";    
     if (!$mysqli->query($query)) {
         return false;
     } else {
@@ -155,7 +153,7 @@ function deleteOption($choiceID){
 }
 function guidePublish($id){
     $mysqli = connect();
-    $query = "update guides set status='published' where id='".$id."'";    
+    $query = "update guides set status='published' where id='".$id."' limit 1";    
     if (!$mysqli->query($query)) {
         return false;
     } else {

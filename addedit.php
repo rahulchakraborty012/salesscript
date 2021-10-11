@@ -59,6 +59,7 @@ if(!empty($_GET['option_id'])){
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" ></script>
+  <?php include('alert.php')?>   
     
     <div class="container">
     	<div class="row">
@@ -107,7 +108,7 @@ if(!empty($_GET['option_id'])){
 			var option_id = '<?= $option_id; ?>';
 			console.log(question_id);
     		if($.trim(stepTitle)=='' || $.trim(stepDescription)==''){
-    			 	alert('Please enter step title and description');
+    			 	displayAlert("Please enter step title and description",'error');
     			 	return false;
     		}
 			if(question_id=="")
@@ -120,7 +121,7 @@ if(!empty($_GET['option_id'])){
     		var stepDescription = $('.createStep #stepDescription'+num).val();
 				var question_id = $('.createStep #question_id').val();
     		if($.trim(stepTitle)=='' || $.trim(stepDescription)==''){
-    			 	alert('Please enter step title and description');
+    			 	displayAlert("Please enter step title and description",'error');
     			 	return false;
     		}
 		
@@ -174,7 +175,7 @@ if(!empty($_GET['option_id'])){
 					request.done(function(response){
 							if(response!=false){								
 								$("#question_id").val(response);
-								alert('Question Saved successfully');
+								displayAlert('Question Saved successfully','success');
 							}
 					});
 					request.fail(function(err){
@@ -190,7 +191,7 @@ if(!empty($_GET['option_id'])){
 						  dataType: "json"
 					});
 					request.done(function(response){
-							alert('Question Updated successfully');
+							displayAlert('Question Updated successfully','success');
 					});
 					request.fail(function(err){
 							console.log(err);
@@ -203,7 +204,7 @@ if(!empty($_GET['option_id'])){
 				var questionID = $('.createStep #question_id').val();
 				var choiceID = $('.stepChoiceForm #choiceid'+num).val();
     		if(($.trim(stepTitle)=='' || $.trim(stepDescription)=='') && questionID=='' ){
-    			 	alert('Please enter step Choice and Button Label');
+    			 	displayAlert('Please enter step Choice and Button Label','error');
     			 	return false;
     		}
 				if(choiceID=="")
@@ -225,10 +226,10 @@ if(!empty($_GET['option_id'])){
 							$("#choiceid"+num).val(choiceid);
 							if(choiceid)
 									$("#createnewquestion"+num).removeClass('hidden');
-							alert("Choice saved successfully");
+							displayAlert('Choice saved successfully','success');
 					});
 					request.fail(function(err){
-							alert(err);
+							displayAlert(err,'error');
 					})
     	}
 
@@ -241,7 +242,7 @@ if(!empty($_GET['option_id'])){
 						  dataType: "json"
 					});
 					request.done(function(response){
-						alert("Choice updated successfully");
+						displayAlert("Choice updated successfully",'success');
 					});
 					request.fail(function(err){
 						
@@ -260,7 +261,7 @@ if(!empty($_GET['option_id'])){
 					});
 					request.done(function(response){
 							EditChoices(num);
-							alert("Choice removed successfully");
+							displayAlert('Choice removed successfully','success');
 					});
 					request.fail(function(err){
 						console.log(err.status);

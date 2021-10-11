@@ -86,11 +86,8 @@ $guides = guideList();
                                                         <a href="guide.php?guide_id=<?=$g['id'];?>&type=publish" class='btn btn-warning'>Publish</a> &nbsp &nbsp
                                                     <?php
                                                     }?>
-                                                    <?php
-                                                    if($g['status']=='draft'){?>
-                                                        <a href="preview.php?guide_id=<?=$g['id'];?>" class='btn btn-primary'>Preview</a><td>
-                                                    <?php
-                                                    }?>
+                                                    
+                                                    <a href="preview.php?guide_id=<?=$g['id'];?>" class='btn btn-primary'>Preview</a><td>
                                                     
                                             </tr>    
                                             <?php
