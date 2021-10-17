@@ -87,7 +87,7 @@ $guides = guideList();
                                                     <?php
                                                     }?>
                                                     
-                                                    <a href="preview.php?guide_id=<?=$g['id'];?>" class='btn btn-primary'>Preview</a><td>
+                                                    <a href="preview_new.php?guide_id=<?=$g['id'];?>" class='btn btn-primary'>Preview</a><td>
                                                     
                                             </tr>    
                                             <?php
