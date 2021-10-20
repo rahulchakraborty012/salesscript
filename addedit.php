@@ -78,8 +78,8 @@ if(!empty($_GET['option_id'])){
   				init();
   		});
   		function init(){
-  				var guideTitle = '<?=$guideTitle;?>';
-  				var guideDesc = '<?=$guideDesc;?>';
+  				var guideTitle = "<?=addslashes($guideTitle)?>";
+  				var guideDesc = "<?=addslashes($guideDesc);?>";
   				var guideId = '<?=$guideId;?>';
   				var i=1;
   				$('.createStep').attr('id','createStep'+i);
@@ -152,9 +152,9 @@ if(!empty($_GET['option_id'])){
 					var html = '<div class="choiceOptions" id="choiceOption'+<?= $cnt; ?>+'" style="margin-top:10px;">'
 					+'<div class="form-group">'
 					+'<label for="choiceName">Choice'+elementCount+'</label>'
-					+'<input type="text" name="choice_title'+elementCount+'" class="form-control" id="choiceTitle'+elementCount+'" aria-describedby="choiceName" value="<?= $g['option_title']; ?>"><br/>'
+					+'<input type="text" name="choice_title'+elementCount+'" class="form-control" id="choiceTitle'+elementCount+'" aria-describedby="choiceName" value="<?= addslashes($g['option_title']); ?>"><br/>'
 					+'<label for="choiceButtonLabel">Button Label</label>'
-					+'<input type="text" name="choice_button_label'+elementCount+'" class="form-control" id="choiceButtonLabel'+elementCount+'" aria-describedby="choiceButtonLabel" value="<?= $g['option_label']; ?>"><input type="hidden" name="choice_id'+elementCount+'" class="form-control" id="choiceid'+elementCount+'" aria-describedby="choiceid" value="<?= $g['id']; ?>"><br/>'
+					+'<input type="text" name="choice_button_label'+elementCount+'" class="form-control" id="choiceButtonLabel'+elementCount+'" aria-describedby="choiceButtonLabel" value="<?= addslashes($g['option_label']); ?>"><input type="hidden" name="choice_id'+elementCount+'" class="form-control" id="choiceid'+elementCount+'" aria-describedby="choiceid" value="<?= $g['id']; ?>"><br/>'
 					+'<a id="saveChoices" onclick="saveChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-success">Save <i class="fa fa-save"></i></a>  <a id="removeChoices" onclick="removeChoices('+elementCount+');" href="javascript:void(0);" class="btn btn-danger">Remove <i class="fa fa-remove"></i></a> &nbsp;'
 	  	+'<a id="createnewquestion'+elementCount+'" onclick="createnewQuestion('+elementCount+');" href="javascript:void(0);" class="btn btn-success">Go to next step</a></div>';
 

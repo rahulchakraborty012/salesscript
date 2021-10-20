@@ -1,7 +1,7 @@
 <?php
 require_once 'database.php';
 if(!empty($_POST)){  
-    if(!empty($_POST['question_id']) && !empty($_POST['option_title'])){
+    if(!empty($_POST['question_id']) && !empty($_POST['option_title']) && empty($_POST['choiceID'])){
         $insertData1['question_id'] = $_POST['question_id'];
         $insertData1['option_title'] = addslashes($_POST['option_title']);
         $insertData1['option_label'] = addslashes($_POST['option_label']);        
