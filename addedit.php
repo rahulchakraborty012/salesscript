@@ -5,7 +5,7 @@ if(!empty($_GET['guide_id'])){
 		$guideTitle = $guideDesc = $guideId ='';
 		if(!empty($guideData[0])){
 				$guideTitle = $guideData[0]['question_title'];
-				$guideDesc = $guideData[0]['question_description'];
+				$guideDesc = trim($guideData[0]['question_description']);
 				$guideId = $guideData[0]['id'];
 		}
 		$guideoptionData = guideOptions($_GET['guide_id']);
@@ -18,7 +18,7 @@ if(!empty($_GET['option_id'])){
 	$guideTitle = $guideDesc = $guideId ='';
 	if(!empty($guideData[0])){
 			$guideTitle = $guideData[0]['question_title'];
-			$guideDesc = $guideData[0]['question_description'];
+			$guideDesc = trim($guideData[0]['question_description']);
 			$guideId = $guideData[0]['id'];
 			$guideoptionData = guideOptions($guideId);			
 	}	
@@ -59,6 +59,7 @@ if(!empty($_GET['option_id'])){
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" ></script>
+    <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
   <?php include('alert.php')?>   
     
     <div class="container">
@@ -79,10 +80,14 @@ if(!empty($_GET['option_id'])){
   		});
   		function init(){
   				var guideTitle = "<?=addslashes($guideTitle)?>";
-  				var guideDesc = "<?=addslashes($guideDesc);?>";
+  				var guideDesc = "<?= preg_replace('/\s\s+/', '',addslashes($guideDesc));?>";
   				var guideId = '<?=$guideId;?>';
   				var i=1;
-  				$('.createStep').attr('id','createStep'+i);
+        CKEDITOR.on('instanceReady', function(evt) {
+						CKEDITOR.instances['stepDescription'+i].setData(guideDesc);
+				});
+				
+				$('.createStep').attr('id','createStep'+i);
   				var html ='<div class="form-group">'
 					    +'<label for="stepNamme">Step Name</label>'
 					    +'<input type="text" name="question_title" class="form-control" id="stepTitle'+i+'" aria-describedby="stepName" placeholder="Enter Step Title" value="'+guideTitle+'"> <input type="hidden" name="question_id" class="form-control" id="question_id" aria-describedby="stepName_id" value="'+guideId+'">'
@@ -90,7 +95,7 @@ if(!empty($_GET['option_id'])){
 						+'</div>'
 						+'<div class="form-group">'
 					    +'<label for="stepDescription">Step Description</label>'
-					    +'<textarea class="form-control" name="question_description" id="stepDescription'+i+'" aria-describedby="stepDescription" placeholder="Enter Step Description">'+guideDesc+'</textarea>'
+					    +'<textarea name="question_description" id="stepDescription'+i+'" aria-describedby="stepDescription" id="stepDescription'+i+'" placeholder="Enter Step Description"></textarea>'
 					    +'<small class="form-text text-muted">Please enter the step description</small>'
 		        +'</div>'
 
@@ -100,10 +105,12 @@ if(!empty($_GET['option_id'])){
 					  +'</div>';
 					  $('#createStep'+i).html(html);
 						EditChoices(i);
+						CKEDITOR.replace( 'stepDescription'+i );
   		}
 		function createQuestion(num){
 			var stepTitle = $('.createStep #stepTitle'+num).val();
-    	var stepDescription = $('.createStep #stepDescription'+num).val();
+			var stepDescription =CKEDITOR.instances['stepDescription'+num].getData();
+
 			var question_id = $('.createStep #question_id').val();
 			var option_id = '<?= $option_id; ?>';
 			console.log(question_id);
@@ -118,7 +125,7 @@ if(!empty($_GET['option_id'])){
 		}
     	function createChoices(num){    
     		var stepTitle = $('.createStep #stepTitle'+num).val();
-    		var stepDescription = $('.createStep #stepDescription'+num).val();
+    		var stepDescription =	CKEDITOR.instances['stepDescription'+num].getData();
 				var question_id = $('.createStep #question_id').val();
     		if($.trim(stepTitle)=='' || $.trim(stepDescription)==''){
     			 	displayAlert("Please enter step title and description",'error');

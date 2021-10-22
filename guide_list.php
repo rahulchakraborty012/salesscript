@@ -58,7 +58,6 @@ $guides = guideList();
                                     <tr>
                                         <th>Sr.No</th>
                                         <th>Guide Name</th>
-                                        <th>Guide Description</th>
                                         <th>Status</th>
                                         <th>Created Date</th>
                                         <th>Action</th>
@@ -76,7 +75,6 @@ $guides = guideList();
                                              <tr>
                                                 <td><?=$cnt;?></td>
                                                 <td><?=$g['question_title'];?></td>
-                                                <td><?=$g['question_description'];?></td>
                                                 <td><?=$g['status'];?></td>
                                                 <td><?=date('F d, Y',strtotime($g['created_at']));?></td>
                                                 <td><a class='btn btn-primary' href="addedit.php?guide_id=<?=$g['id'];?>">Edit </a> &nbsp &nbsp
