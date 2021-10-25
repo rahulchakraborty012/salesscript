@@ -173,4 +173,28 @@ function getBackLink($option_id){
     } 
     return $selectArr;
 }
+
+function getFirstGuideID($option_id){
+  
+    $mysqli = connect();
+    $query = "SELECT g.answer_option_id,g.id from guides g join options o on g.id=o.question_id where o.id='".$option_id."'";
+    $result = $mysqli->query($query);
+    //$selectArr = [];
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            if(!empty($row['answer_option_id'])){
+                $option_id="";
+                $row1=getFirstGuideID($row['answer_option_id']);
+                
+            }
+            else{
+                $selectArr[] = $row;
+            }
+             
+        }
+       
+    } 
+    return $selectArr;
+}
+
 ?>

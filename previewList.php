@@ -32,7 +32,14 @@ if(!empty($_GET['option_id'])){
   				$backLink = "previewList.php?guide_id=".$getPreviousData[0]['id'];
   		}
   }
-
+  if(empty($guideoptionData)){
+  $getFirstGuideData = getFirstGuideID($_GET['option_id']);
+  if(!empty($getFirstGuideData[0])){
+  		if(!empty($getFirstGuideData[0]['id'])){
+			$backLink1 = "previewList.php?guide_id=".$getFirstGuideData[0]['id'];
+  		}
+  }
+}
 }
 $content = '
     	<div class="row" style="margin-top:30px;">
@@ -49,21 +56,30 @@ $content = '
     					<div id="choiceBox">';
 
     						if(!empty($guideoptionData)){
-    								foreach($guideoptionData as $option){
-    										$id= $option["id"];
-    										$label = ucfirst($option["option_label"]);
-    										$url = "previewList.php?option_id=$id";
-    										$funName = "getContent('$url')";
-    										$content .=	'<a onclick="'.$funName.'" href="javascript:void(0)" class="btn btn-success">'.$label.' &rarr;</a> <br/> <br/>';
-    								}
-                    if(!empty($backLink)){
-                    	$funName = "getContent('$backLink')";
-                       $content .= '<a onclick="'.$funName.'" href="javascript:void(0)" class="btn btn-success"> &larr;</a>';
-                    }
-    						}
-                $content .='
-    					</div>
+    							foreach($guideoptionData as $option){
+									$id= $option["id"];
+									$label = ucfirst($option["option_label"]);
+									$url = "previewList.php?option_id=$id";
+									$funName = "getContent('$url')";
+									$content .=	'<a onclick="'.$funName.'" href="javascript:void(0)" class="btn btn-success">'.$label.' &rarr;</a> <br/> <br/>';
+								}
+								if(!empty($backLink)){
+									$funName = "getContent('$backLink')";
+								$content .= '<a onclick="'.$funName.'" href="javascript:void(0)" class="btn btn-success"> &larr;</a>&nbsp; &nbsp;';
+								}
+							}
+							if(!empty($guideData[0])){
+								$content .=' <a href="addedit.php?guide_id='.$guideId.'" href="javascript:void(0)" class="btn btn-success">Add More Option</a>';
+							}
+						
+							if(empty($guideoptionData)){
+								$content .=' <a  href="'.$backLink1.'" class="btn btn-success">Back To start</a>';
+							}
+    					'</div>
 				</div>
 			</div>';
-echo $content;die;
+echo $content;
+echo ",".$guideTitle;
+
+die;
 ?>

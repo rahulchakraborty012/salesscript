@@ -12,7 +12,7 @@ require_once 'guide.php';
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Sales Script</title>
+    <title id="guidetitle"></title>
   </head>
   <body style="background-color: #E7E9EB;">     
     <h3> <a href="guide_list.php"> Back to Guide List</a></h3>
@@ -24,7 +24,7 @@ require_once 'guide.php';
 
     </div>
   </body>
-  	<script>
+    <script>
       var guideId = "<?=$_GET['guide_id']?>";
       var optionId  = "<?=$_GET['option_id'];?>";
       if(typeof optionId !='undefined' && optionId!='')
@@ -39,8 +39,10 @@ require_once 'guide.php';
             url: url,
             type: "GET",
             success: function (data) {
+              var data1= data.split(",");
               $('.container').text('');
-                var result = $('.container').html(data);
+                var result = $('#guidetitle').html(data1[1]);
+                var result = $('.container').html(data1[0]);
                 window.history.pushState("data","Preview",browserUrl);
             },
             error: function (xhr, status) {
