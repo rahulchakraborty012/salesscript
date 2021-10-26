@@ -21,6 +21,9 @@ if(!empty($_POST)){
     else if(!empty($_POST['choiceID']) && $_POST['type']=='deleteOption'){        
         deleteOption($_POST['choiceID']);
     }
+    else if(!empty($_POST['optionId']) && $_POST['type']=='updateCounter'){        
+        updateCounter($_POST['optionId']);
+    }
     else{
         $insertData['question_title'] = addslashes($_POST['title']);
         $insertData['question_description'] = addslashes($_POST['description']);
@@ -174,27 +177,34 @@ function getBackLink($option_id){
     return $selectArr;
 }
 
-function getFirstGuideID($option_id){
-  
+function getFirstGuideId($option_id){
     $mysqli = connect();
     $query = "SELECT g.answer_option_id,g.id from guides g join options o on g.id=o.question_id where o.id='".$option_id."'";
     $result = $mysqli->query($query);
-    //$selectArr = [];
+    $guideId ='';
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             if(!empty($row['answer_option_id'])){
-                $option_id="";
-                $row1=getFirstGuideID($row['answer_option_id']);
-                
+                $row1=getFirstGuideID($row['answer_option_id']);                
             }
             else{
-                $selectArr[] = $row;
-            }
-             
-        }
-       
+                $guideId = $row['id'];
+                break;
+            }             
+        }       
     } 
-    return $selectArr;
+    return $guideId;
 }
 
+function updateCounter($optionId){
+    $mysqli = connect();
+    $query = "update options set click_count= click_count+1 where id='".$optionId."'";    
+    if (!$mysqli->query($query)) {
+        return false;
+    } else {
+        echo "Option count updated successfully";
+        return true;
+       
+    }  
+}
 ?>

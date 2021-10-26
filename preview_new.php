@@ -53,5 +53,18 @@ require_once 'guide.php';
             }
         });
       }
+      function updateCounter(optionId){
+        var postData = {"optionId":optionId ,"type" : "updateCounter"};
+    			var request = $.ajax({
+						  url: "guide.php",
+						  method: "POST",
+						  data: postData,
+						  dataType: "json"
+					});
+					request.done(function(response){
+					});
+					request.fail(function(err){
+					})
+      }
     </script>
 </html>
