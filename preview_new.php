@@ -33,13 +33,15 @@ require_once 'guide.php';
         var url = 'previewList.php?guide_id='+ guideId;
       getContent(url);
       function getContent(url){
+        if(url=='')
+          window.location.reload();
         let browserUrl = url;
         browserUrl= browserUrl.replace("previewList", "preview_new");
         $.ajax({
             url: url,
             type: "GET",
             success: function (data) {
-              var data1= data.split(",");
+              var data1= data.split("^");
               $('.container').text('');
                 var result = $('#guidetitle').html(data1[1]);
                 var result = $('.container').html(data1[0]);

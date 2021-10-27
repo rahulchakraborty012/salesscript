@@ -185,7 +185,7 @@ function getFirstGuideId($option_id){
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             if(!empty($row['answer_option_id'])){
-                $row1=getFirstGuideID($row['answer_option_id']);                
+                $guideId=getFirstGuideID($row['answer_option_id']);                
             }
             else{
                 $guideId = $row['id'];
@@ -206,5 +206,18 @@ function updateCounter($optionId){
         return true;
        
     }  
+}
+
+function getAddMoreLink($option_id){
+    $mysqli = connect();
+    $query = "SELECT id,answer_option_id from guides g where answer_option_id='".$option_id."'";
+    $result = $mysqli->query($query);
+    $selectArr = [];
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+              $guideId = $row['id'];
+        }
+    } 
+    return $guideId;
 }
 ?>

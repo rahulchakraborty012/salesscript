@@ -12,7 +12,7 @@ if(!empty($_GET['guide_id'])){
 }
 $option_id="";
 $backLink='';
-$backLink1='#';
+$backLink1='';
 if(!empty($_GET['option_id'])){
 		$option_id=$_GET['option_id'];
 		$guideData = guideList('',$_GET['option_id']);
@@ -36,11 +36,17 @@ if(!empty($_GET['option_id'])){
 		if(empty($guideoptionData)){
 				$guideId = getFirstGuideId($_GET['option_id']);
 				if(!empty($guideId)){
-					$backLink1 = "preview_new.php?guide_id=".$guideId;
+					$backLink1 = "previewList.php?guide_id=".$guideId;
 				}
 		}  	
 }
 
+if(!empty($option_id)){
+		$addMoreGuideId = getAddMoreLink($option_id);
+		$addMoreLink = 'addedit.php?guide_id='.$addMoreGuideId;
+} else if(!empty($guideId)){
+		$addMoreLink = 'addedit.php?guide_id='.$guideId;
+}
 
 $content = '
     	<div class="row" style="margin-top:30px;">
@@ -58,30 +64,30 @@ $content = '
 
     						if(!empty($guideoptionData)){
     							foreach($guideoptionData as $option){
-									$id= $option["id"];
-									$label = ucfirst($option["option_label"]);
-									$url = "previewList.php?option_id=$id";
-									$funName = "getContent('$url');";
-									$CountfunName  = "updateCounter('$id')";
-									$content .=	'<a onclick="'.$funName.''.$CountfunName.'" href="javascript:void(0)" class="btn btn-success">'.$label.' &rarr;</a> <br/> <br/>';
-								}
-								if(!empty($backLink)){
-									$funName = "getContent('$backLink')";
-									$content .= '<a onclick="'.$funName.'" href="javascript:void(0)" class="btn btn-success"> &larr;</a>&nbsp; &nbsp;';
-								}
+											$id= $option["id"];
+											$label = ucfirst($option["option_label"]);
+											$url = "previewList.php?option_id=$id";
+											$funName = "getContent('$url');";
+											$CountfunName  = "updateCounter('$id')";
+											$content .=	'<a onclick="'.$funName.''.$CountfunName.'" href="javascript:void(0)" class="btn btn-success">'.$label.' &rarr;</a> <br/> <br/>';
+									}
+									if(!empty($backLink)){
+										$funName = "getContent('$backLink')";
+										$content .= '<a onclick="'.$funName.'" href="javascript:void(0)" class="btn btn-success"> &larr;</a><br/><br/> ';
+									}
 							}
 							if(!empty($guideData[0])){
-								$content .=' <a href="addedit.php?guide_id='.$guideId.'" href="javascript:void(0)" class="btn btn-success">Add More Option</a>';
+								$content .=' <a href="'.$addMoreLink.'" href="javascript:void(0)" class="btn btn-success">Add More Option</a><br/><br/>';
 							}
 						
 							if(empty($guideoptionData)){
-								$content .=' <a  href="'.$backLink1.'" class="btn btn-success">Back To start</a>';
+								$funName = "getContent('$backLink1')";
+								$content .= '<a onclick="'.$funName.'" href="javascript:void(0)" class="btn btn-success" style="margin-left: 10px;"> Back To start</a><br/>';
 							}
     					'</div>
 				</div>
 			</div>';
 echo $content;
-echo ",".$guideTitle;
-
+echo "^".$guideTitle;
 die;
 ?>
